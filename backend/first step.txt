@@ -1,0 +1,9 @@
+
+
+
+Install required packages:
+
+npm install express mongoose axios express-basic-auth
+
+
+

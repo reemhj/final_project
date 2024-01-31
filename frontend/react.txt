@@ -1,0 +1,102 @@
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
+import axios from 'axios';
+
+const Login = ({ setUser, user }) => {
+  const [email, setEmail] = useState('');
+
+  const handleLogin = async () => {
+    // Call your backend authentication endpoint
+    try {
+      const response = await axios.post('http://localhost:3001/api/login', { email });
+      setUser(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (user) {
+    return <Redirect to="/profile" />;
+  }
+
+  return (
+    <div>
+      <h2>Login</h2>
+      <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+      <button onClick={handleLogin}>Login</button>
+    </div>
+  );
+};
+
+const Profile = ({ user }) => {
+  return (
+    <div>
+      <h2>Profile</h2>
+      {user && (
+        <>
+          <p>Email: {user.email}</p>
+          <p>Preferences: {JSON.stringify(user.preferences)}</p>
+        </>
+      )}
+    </div>
+  );
+};
+
+const Weather = ({ user }) => {
+  const [location, setLocation] = useState('');
+
+  const handleGetWeather = async () => {
+    // Call your backend weather API endpoint
+    try {
+      await axios.post('http://localhost:3001/api/weather', { email: user.email, location });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Weather</h2>
+      <input type="text" placeholder="Location" onChange={(e) => setLocation(e.target.value)} />
+      <button onClick={handleGetWeather}>Get Weather</button>
+    </div>
+  );
+};
+
+const App = () => {
+  const [user, setUser] = useState(null);
+
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              <Link to="/profile">Profile</Link>
+            </li>
+            <li>
+              <Link to="/weather">Weather</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <hr />
+
+        <Route path="/login">
+          <Login setUser={setUser} user={user} />
+        </Route>
+        <Route path="/profile">
+          <Profile user={user} />
+        </Route>
+        <Route path="/weather">
+          <Weather user={user} />
+        </Route>
+      </div>
+    </Router>
+  );
+};
+
+export default App;

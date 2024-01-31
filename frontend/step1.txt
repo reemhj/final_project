@@ -1,0 +1,10 @@
+
+
+
+Install required packages:
+
+
+npm install react-router-dom axios
+
+
+Replace the contents of src/App.js with the following: in file React
